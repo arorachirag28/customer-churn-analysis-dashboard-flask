@@ -1,0 +1,581 @@
+@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;500;600;700&display=swap');
+
+:root {
+  --blue: #2563eb;
+  --blue-dark: #1e3a8a;
+  --green: #16a34a;
+  --orange: #f59e0b;
+  --red: #dc2626;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --bg: #eef2ff;
+  --card: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 220px;
+  background: #1f2937;
+  color: white;
+  padding: 20px 15px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--blue);
+  display: grid;
+  place-items: center;
+}
+
+.nav-label {
+  margin-top: 18px;
+  margin-bottom: 8px;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nav-item {
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+.nav-item.active {
+  background: var(--blue);
+  color: white;
+}
+
+.side-card {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 20px;
+  background: #374151;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.side-card strong,
+.side-card span {
+  display: block;
+}
+
+.side-card span {
+  margin-top: 6px;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.source-badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 8px;
+  background: white;
+  color: #1f2937;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+main {
+  margin-left: 220px;
+}
+
+header {
+  background: white;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: var(--blue-dark);
+}
+
+header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.live-pill {
+  padding: 8px 10px;
+  background: #dbeafe;
+  color: var(--blue-dark);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.content {
+  padding: 24px 28px 40px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.toolbar select,
+.table-title input {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 8px 10px;
+  background: white;
+  color: var(--text);
+  outline: none;
+}
+
+.export-btn {
+  border: 0;
+  background: var(--green);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.metric-card,
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.metric-card span,
+.metric-card b,
+.metric-card small {
+  display: block;
+}
+
+.metric-card span {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.metric-card b {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.metric-card small {
+  font-size: 12px;
+}
+
+.bad {
+  color: var(--red);
+}
+
+.warn {
+  color: var(--orange);
+}
+
+.good {
+  color: var(--green);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.panel {
+  padding: 18px;
+}
+
+.panel-head {
+  margin-bottom: 12px;
+}
+
+.panel-head h2 {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 18px;
+}
+
+.panel-head p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.recommendations {
+  display: grid;
+  gap: 10px;
+}
+
+.recommendation {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.recommendation i {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: var(--blue-dark);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.recommendation b,
+.recommendation span {
+  display: block;
+}
+
+.recommendation b {
+  font-size: 13px;
+}
+
+.recommendation span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.recommendation button,
+.action,
+.drawer-action {
+  border: 0;
+  background: var(--blue);
+  color: white;
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.table-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table-title {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.table-scroll {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+}
+
+th {
+  background: #dbeafe;
+  color: var(--blue-dark);
+  text-align: left;
+  padding: 12px;
+  font-size: 12px;
+}
+
+td {
+  border-top: 1px solid var(--border);
+  padding: 12px;
+  font-size: 13px;
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+td b,
+td small {
+  display: block;
+}
+
+td small {
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.high {
+  color: var(--red);
+}
+
+.medium {
+  color: var(--orange);
+}
+
+.low {
+  color: var(--green);
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 28px;
+}
+
+.note-box,
+.clean-box {
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.clean-box {
+  margin-top: 12px;
+}
+
+.clean-box b,
+.clean-box span {
+  display: block;
+}
+
+.clean-box b {
+  color: var(--blue-dark);
+  margin-bottom: 6px;
+}
+
+#drawer {
+  position: fixed;
+  top: 0;
+  right: -390px;
+  width: 360px;
+  height: 100vh;
+  background: white;
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 14px rgba(0, 0, 0, 0.12);
+  padding: 22px;
+  transition: 0.25s;
+  z-index: 10;
+  overflow: auto;
+}
+
+#drawer.open {
+  right: 0;
+}
+
+.drawer-close {
+  float: right;
+  border: 1px solid var(--border);
+  background: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#drawer h2 {
+  margin: 42px 0 5px;
+  color: var(--blue-dark);
+}
+
+#drawer p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.risk-box {
+  margin: 18px 0;
+  padding: 14px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.risk-box span {
+  font-size: 13px;
+}
+
+.risk-box b {
+  font-size: 28px;
+}
+
+#drawer h3 {
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.detail-grid div {
+  background: #f3f4f6;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.detail-grid span,
+.detail-grid b {
+  display: block;
+}
+
+.detail-grid span {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.driver-row {
+  border-top: 1px solid var(--border);
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 13px;
+}
+
+.drawer-action {
+  width: 100%;
+  margin-top: 14px;
+}
+
+#toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  background: #1f2937;
+  color: white;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: 0.2s;
+  z-index: 20;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1050px) {
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .span-2 {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+  }
+
+  .side-card {
+    position: static;
+    margin-top: 18px;
+  }
+
+  main {
+    margin-left: 0;
+  }
+
+  header,
+  .table-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  #drawer {
+    width: 100%;
+    right: -100%;
+  }
+}

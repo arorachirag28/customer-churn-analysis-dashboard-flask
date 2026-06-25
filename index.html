@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Indian Customer Churn Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('plotly_js') }}"></script>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">C</div><span>Churn Project</span></div>
+  <div class="nav-label">MENU</div>
+  <div class="nav-item active">Dashboard</div>
+  <div class="nav-item">Customers</div>
+  <div class="nav-item">Reports</div>
+  <div class="side-card">
+    <strong>Data Status</strong>
+    <span>Kaggle-ready project with Indian telecom context.</span>
+    <div id="source" class="source-badge">{{ payload.source }}</div>
+  </div>
+</aside>
+
+<main>
+  <header>
+    <div>
+      <h1>Indian Customer Churn Analysis Dashboard</h1>
+      <p>Kaggle-ready churn project focused on Indian telecom customers, cities, plans, and operators.</p>
+    </div>
+    <div class="header-actions"><div class="live-pill">Python + Flask + MySQL + Plotly</div></div>
+  </header>
+
+  <div class="content">
+    <div class="toolbar">
+      <label>View
+        <select id="view">
+          <option value="all">All customers</option>
+          <option value="high">High risk only</option>
+          <option value="active">Active customers</option>
+        </select>
+      </label>
+      <label>Segment
+        <select id="segment">
+          <option value="all">All segments</option>
+          <option>Urban</option>
+          <option>Semi-urban</option>
+          <option>Rural</option>
+          <option>Metro</option>
+          <option>Premium</option>
+          <option>Standard</option>
+          <option>Basic</option>
+        </select>
+      </label>
+      <button class="export-btn" onclick="exportReport()">Export CSV</button>
+    </div>
+
+    <section class="metrics">
+      <div class="metric-card"><span>At Risk Customers</span><b id="risk-count"></b><small class="bad">High and medium risk</small></div>
+      <div class="metric-card"><span>Average Churn Risk</span><b id="churn-rate"></b><small class="bad">Based on customer signals</small></div>
+      <div class="metric-card"><span>Revenue Risk</span><b id="revenue-risk"></b><small class="warn">Monthly value in Rs.</small></div>
+      <div class="metric-card"><span>Possible Retention Value</span><b id="retention-value"></b><small class="good">Estimated recoverable Rs.</small></div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="panel span-2">
+        <div class="panel-head"><h2>Churn Risk Distribution</h2><p>How many customers are low, medium, or high risk.</p></div>
+        <div id="risk-chart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Reasons for Churn</h2><p>Main reasons why customers may leave.</p></div>
+        <div id="driver-chart"></div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="panel">
+        <div class="panel-head"><h2>Operator and Plan Risk</h2><p>Average risk by Indian telecom operator and plan type.</p></div>
+        <div id="segment-chart"></div>
+      </div>
+      <div class="panel span-2">
+        <div class="panel-head"><h2>Retention Suggestions</h2><p>Simple actions the company can take.</p></div>
+        <div id="recommendations"></div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="panel span-2">
+        <div class="panel-head"><h2>Indian City Risk</h2><p>Top cities based on average churn risk.</p></div>
+        <div id="city-chart"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Dataset Note</h2><p>How Kaggle data is used in this project.</p></div>
+        <div class="note-box">
+          The app loads <b>data/kaggle_churn.csv</b> first. If Kaggle data is not available,
+          it uses the built-in Indian sample dataset. Run <b>download_kaggle_data.ps1</b>
+          after setting your Kaggle API token.
+        </div>
+        <div class="clean-box" id="clean-box"></div>
+      </div>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-head table-title">
+        <div><h2>Customer Watchlist</h2><p>Click a customer to see details.</p></div>
+        <input id="search" placeholder="Search customers...">
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Customer</th><th>City</th><th>Operator</th><th>Risk</th><th>Primary driver</th><th>MRR</th><th>Action</th></tr>
+          </thead>
+          <tbody id="customers"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<aside id="drawer"><button onclick="closeDrawer()" class="drawer-close">x</button><div id="drawer-body"></div></aside>
+<div id="toast"></div>
+
+<script>
+let payload = {{ payload|tojson }};
+let visibleCustomers = [];
+const config = {displayModeBar: false, responsive: true};
+
+function chart(id, raw) {
+  const figure = JSON.parse(raw);
+  Plotly.react(id, figure.data, figure.layout, config);
+}
+
+function render(p) {
+  payload = p;
+  document.getElementById("source").textContent = p.source;
+  ["risk-count", "churn-rate", "revenue-risk", "retention-value"].forEach(id => {
+    document.getElementById(id).textContent = p.metrics[id.replaceAll("-", "_")];
+  });
+  chart("risk-chart", p.charts.risk);
+  chart("driver-chart", p.charts.drivers);
+  chart("segment-chart", p.charts.segments);
+  chart("city-chart", p.charts.cities);
+  document.getElementById("recommendations").innerHTML = p.recommendations.length
+    ? p.recommendations.map((r, i) => `<div class="recommendation"><i>${String(i + 1).padStart(2, "0")}</i><div><b>${r.action}</b><span>${r.customers} customers - ${r.revenue} MRR exposed</span></div><button onclick="toast('Retention play launched')">Launch play</button></div>`).join("")
+    : `<div class="empty">No at-risk customers in this view.</div>`;
+  visibleCustomers = p.customers;
+  const clean = p.cleaning || {};
+  document.getElementById("clean-box").innerHTML = `
+    <b>Data Cleaning Report</b>
+    <span>Status: ${clean.status || "Checked"}</span>
+    <span>Rows: ${clean.rows_before || 0} to ${clean.rows_after || 0}</span>
+    <span>Duplicates removed: ${clean.duplicates_removed || 0}</span>
+    <span>Missing values after cleaning: ${clean.missing_values_after || 0}</span>
+    <span>Out-of-range values fixed: ${clean.out_of_range_values_fixed || 0}</span>`;
+  renderTable();
+}
+
+function renderTable() {
+  const query = document.getElementById("search").value.toLowerCase();
+  const rows = visibleCustomers.filter(c => `${c.name} ${c.email} ${c.city} ${c.state} ${c.operator} ${c.driver}`.toLowerCase().includes(query));
+  document.getElementById("customers").innerHTML = rows.map(c => `
+    <tr onclick="openCustomer('${c.customer_id}')">
+      <td><b>${c.name}</b><small>${c.email}</small></td>
+      <td>${c.city}<small>${c.state}</small></td>
+      <td>${c.operator}<small>${c.plan_type}</small></td>
+      <td><strong class="${c.level.toLowerCase()}">${c.risk}%</strong></td>
+      <td>${c.driver}</td>
+      <td>${c.mrr}</td>
+      <td><button class="action" onclick="event.stopPropagation();toast('${c.action.replaceAll("'", "")} scheduled')">${c.action}</button></td>
+    </tr>`).join("") || `<tr><td colspan="7" class="empty">No customers match this search.</td></tr>`;
+}
+
+async function refresh() {
+  const view = document.getElementById("view").value;
+  const segment = document.getElementById("segment").value;
+  const response = await fetch(`/api/dashboard?view=${view}&segment=${segment}`);
+  render(await response.json());
+}
+
+async function openCustomer(id) {
+  const response = await fetch(`/api/customer/${id}`);
+  const c = await response.json();
+  document.getElementById("drawer-body").innerHTML = `
+    <h2>${c.name}</h2>
+    <p>${c.email} - ${c.city}, ${c.state}</p>
+    <p>${c.operator} - ${c.plan_type} - ${c.contract_type}</p>
+    <div class="risk-box"><span>Predicted churn risk</span><b class="${c.risk_level.toLowerCase()}">${c.risk_score}%</b></div>
+    <h3>Account signals</h3>
+    <div class="detail-grid">
+      <div><span>MRR</span><b>${c.monthly_revenue}</b></div>
+      <div><span>Tenure</span><b>${c.tenure_months} months</b></div>
+      <div><span>Usage change</span><b>${c.usage_change_pct}</b></div>
+      <div><span>Last login</span><b>${c.last_login_days} days</b></div>
+      <div><span>Support tickets</span><b>${c.support_tickets}</b></div>
+      <div><span>NPS</span><b>${c.nps_score}/10</b></div>
+    </div>
+    <h3>Churn explanation</h3>
+    <div class="driver-row"><span>Primary driver</span><b>${c.primary_driver}</b></div>
+    <div class="driver-row"><span>Risk level</span><b>${c.risk_level}</b></div>
+    <button class="drawer-action" onclick="toast('${c.recommended_action} scheduled')">${c.recommended_action}</button>`;
+  document.getElementById("drawer").classList.add("open");
+}
+
+function closeDrawer() {
+  document.getElementById("drawer").classList.remove("open");
+}
+
+function exportReport() {
+  const view = document.getElementById("view").value;
+  const segment = document.getElementById("segment").value;
+  window.location = `/api/export?view=${view}&segment=${segment}`;
+}
+
+function toast(text) {
+  const element = document.getElementById("toast");
+  element.textContent = text;
+  element.classList.add("show");
+  setTimeout(() => element.classList.remove("show"), 2200);
+}
+
+document.getElementById("view").onchange = refresh;
+document.getElementById("segment").onchange = refresh;
+document.getElementById("search").oninput = renderTable;
+render(payload);
+</script>
+</body>
+</html>
